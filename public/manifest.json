@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "クエスト絆ポイント",
+  "name": "FGOクエスト絆ポイント計算機",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,7 +18,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "https://kanata3249.github.io/questbondcalculator",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"
