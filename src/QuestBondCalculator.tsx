@@ -101,9 +101,9 @@ function QuestBondCalculator() {
             })}
           </Select>
         </FormControl>
-        <TextField id="quest" label="クエスト絆ポイント" variant="outlined" type="number" fullWidth sx={{ mb: 2 }}  value={questBond} onChange={onQuestBondChanged} />
-        <TextField id="ce-bonus" label="礼装ボーナス(肖像は除く)" variant="outlined" type="number" fullWidth sx={{ mb: 2 }}  onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
-        <TextField id="event-bonus" label="イベントボーナス" variant="outlined" type="number" fullWidth sx={{ mb: 2 }}  onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
+        <TextField id="quest" label="クエスト絆ポイント" variant="outlined" type="number" inputProps={{inputMode:"numeric"}} fullWidth sx={{ mb: 2 }}  value={questBond} onChange={onQuestBondChanged} />
+        <TextField id="ce-bonus" label="礼装ボーナス(肖像は除く)" variant="outlined" type="number" inputProps={{inputMode:"numeric"}} fullWidth sx={{ mb: 2 }}  onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
+        <TextField id="event-bonus" label="イベントボーナス" variant="outlined" type="number" inputProps={{inputMode:"numeric"}} fullWidth sx={{ mb: 2 }}  onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
         <FormControlLabel control={<Checkbox id="ce-fixed-bonus" />} label="肖像" onChange={onChange} />
         <FormControlLabel control={<Checkbox id="start-up-bonus" />} label="前衛" onChange={onChange} />
         <FormControlLabel control={<Checkbox id="start-up-support-bonus" />} label="サポート前衛" onChange={onChange} />
