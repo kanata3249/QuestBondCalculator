@@ -8,6 +8,8 @@ import Checkbox from '@mui/material/Checkbox';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
 
 const rounddown = (v: number) => (v >> 0)
 const calc = (quest: number, ceBonus: number, useHeroicPortrait: boolean, eventBonus: number, isStartup: boolean, isStartupSupport: boolean, useTeapot: boolean) : number => {
@@ -38,7 +40,7 @@ function QuestBondCalculator() {
 
   const calcBondPoint = (value? : number) => {
     const baseBond = value || questBond
-    const result = calc(
+    return calc(
       baseBond,
       parseInt((document.getElementById("ce-bonus") as HTMLInputElement)?.value || "0") / 100,
       (document.getElementById("ce-fixed-bonus") as HTMLInputElement)?.checked,
@@ -47,12 +49,16 @@ function QuestBondCalculator() {
       (document.getElementById("start-up-support-bonus") as HTMLInputElement)?.checked,
       (document.getElementById("tea-pot") as HTMLInputElement)?.checked,
     )
-    return `${baseBond}(${result - baseBond}) = ${result}`
   }
-  const [ bondPoint, setBondPoint ] = useState(calcBondPoint())
+  const formatBondPoint = (value? : number) => {
+    const baseBond = value || questBond
+    const result = calcBondPoint(value)
+    return `${baseBond}(${result - baseBond}) = ${result}`
+  } 
+  const [ bondPoint, setBondPoint ] = useState(formatBondPoint())
 
   const onChange = () => {
-    setBondPoint(calcBondPoint())
+    setBondPoint(formatBondPoint())
   }
 
   const onQuestBondChanged = () => {
@@ -65,7 +71,7 @@ function QuestBondCalculator() {
     } else {
       setQuestLevel(directInputKey)
     }
-    setBondPoint(calcBondPoint(value))
+    setBondPoint(formatBondPoint(value))
   }
 
   const onQuestlevelChanged = (event: SelectChangeEvent) => {
@@ -74,8 +80,12 @@ function QuestBondCalculator() {
     if (value && value !== directInputKey) {
       const newQuestBond = questLevelAndBonds.find((v) => v.level === value)
       setQuestBond(newQuestBond?.bond || 0)
-      setBondPoint(calcBondPoint(newQuestBond?.bond || 0))
+      setBondPoint(formatBondPoint(newQuestBond?.bond || 0))
     }
+  }
+
+  const onCopyResult = () => {
+    navigator.clipboard.writeText(calcBondPoint().toString())
   }
 
   return (
@@ -100,7 +110,7 @@ function QuestBondCalculator() {
         <br/>
         <FormControlLabel control={<Checkbox id="tea-pot" />} label="星見のティーポット" onChange={onChange} />
       </form>
-      <TextField id="result" label="結果" variant="outlined" value={bondPoint} fullWidth sx={{ mt: 5 }}  />
+      <TextField id="result" label="結果" variant="outlined" value={bondPoint} fullWidth sx={{ mt: 5 }} InputProps={{endAdornment: <IconButton onClick={onCopyResult}><ContentCopyIcon /></IconButton> }} />
     </div>
   );
 }
