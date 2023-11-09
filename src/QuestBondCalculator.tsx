@@ -38,8 +38,9 @@ type FormValues = {
   useTeaPot: boolean
 }
 
+const defaultFormValues: FormValues = { questBond: 0, ceBonus: 0, eventBonus: 0, useCeFixedBonus: false, isStartUpBonus: false, isStartUpSupportBonus: false, useTeaPot: false }
 const storage = {
-  formValues: () : FormValues => JSON.parse(localStorage.getItem('QuestBondCalculator/formValues') || "{}"),
+  formValues: () : FormValues => JSON.parse(localStorage.getItem('QuestBondCalculator/formValues') || JSON.stringify(defaultFormValues)),
   saveFormValues: (values: FormValues) => localStorage.setItem('QuestBondCalculator/formValues', JSON.stringify(values))
 }
 
