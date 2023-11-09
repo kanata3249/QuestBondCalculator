@@ -28,6 +28,21 @@ const questLevelAndBondTemplate = {
   "90+": 1098
 }
 
+type FormValues = {
+  questBond: number,
+  ceBonus: number,
+  eventBonus: number,
+  useCeFixedBonus: boolean,
+  isStartUpBonus: boolean,
+  isStartUpSupportBonus: boolean,
+  useTeaPot: boolean
+}
+
+const storage = {
+  formValues: () : FormValues => JSON.parse(localStorage.getItem('QuestBondCalculator/formValues') || "{}"),
+  saveFormValues: (values: FormValues) => localStorage.setItem('QuestBondCalculator/formValues', JSON.stringify(values))
+}
+
 const questLevelAndBonds : { level: string, bond: number }[] = Object.entries(questLevelAndBondTemplate).map(([level, bond]) => ({ level, bond }))
 for (let level = 90; level >= 70; level--) {
   const bond = level * 10 + 15
@@ -35,57 +50,59 @@ for (let level = 90; level >= 70; level--) {
 }
 
 function QuestBondCalculator() {
-  const [ questLevel, setQuestLevel ] = useState(questLevelAndBonds[0].level)
-  const [ questBond, setQuestBond ] = useState(0)
-
-  const calcBondPoint = (value? : number) => {
-    const baseBond = value || questBond
+  const calcBondPoint = (formValues: FormValues) => {
     return calc(
-      baseBond,
-      parseInt((document.getElementById("ce-bonus") as HTMLInputElement)?.value || "0") / 100,
-      (document.getElementById("ce-fixed-bonus") as HTMLInputElement)?.checked,
-      parseInt((document.getElementById("event-bonus") as HTMLInputElement)?.value || "0") / 100,
-      (document.getElementById("start-up-bonus") as HTMLInputElement)?.checked,
-      (document.getElementById("start-up-support-bonus") as HTMLInputElement)?.checked,
-      (document.getElementById("tea-pot") as HTMLInputElement)?.checked,
+      formValues.questBond,
+      formValues.ceBonus,
+      formValues.useCeFixedBonus,
+      formValues.eventBonus,
+      formValues.isStartUpBonus,
+      formValues.isStartUpSupportBonus,
+      formValues.useTeaPot
     )
   }
-  const formatBondPoint = (value? : number) => {
-    const baseBond = value || questBond
-    const result = calcBondPoint(value)
+  const formatBondPoint = (formValues: FormValues) => {
+    const baseBond = formValues.questBond
+    const result = calcBondPoint(formValues)
     return `${baseBond}(${result - baseBond}) = ${result}`
   } 
-  const [ bondPoint, setBondPoint ] = useState(formatBondPoint())
+
+  const [ formValues, setFormValues ] = useState(storage.formValues())
+  const questLevel = questLevelAndBonds.find((v) => v.bond === formValues.questBond)?.level || directInputKey
+  const bondPoint = formatBondPoint(formValues)
 
   const onChange = () => {
-    setBondPoint(formatBondPoint())
+    formValues.ceBonus = parseInt((document.getElementById("ce-bonus") as HTMLInputElement)?.value || "0") / 100
+    formValues.useCeFixedBonus = (document.getElementById("ce-fixed-bonus") as HTMLInputElement)?.checked
+    formValues.eventBonus = parseInt((document.getElementById("event-bonus") as HTMLInputElement)?.value || "0") / 100
+    formValues.isStartUpBonus = (document.getElementById("start-up-bonus") as HTMLInputElement)?.checked
+    formValues.isStartUpSupportBonus = (document.getElementById("start-up-support-bonus") as HTMLInputElement)?.checked
+    formValues.useTeaPot = (document.getElementById("tea-pot") as HTMLInputElement)?.checked
+    storage.saveFormValues(formValues)
+
+    setFormValues({ ...formValues})
   }
 
   const onQuestBondChanged = () => {
     const value = parseInt((document.getElementById("quest") as HTMLInputElement).value || "0")
-    setQuestBond(value)
 
-    const questLevelAndBond = questLevelAndBonds.find((v) => v.bond === value)
-    if (questLevelAndBond) {
-      setQuestLevel(questLevelAndBond.level)
-    } else {
-      setQuestLevel(directInputKey)
-    }
-    setBondPoint(formatBondPoint(value))
+    formValues.questBond = value
+    storage.saveFormValues(formValues)
+    setFormValues({ ...formValues})
   }
 
   const onQuestlevelChanged = (event: SelectChangeEvent) => {
     const value = event.target.value as string
-    setQuestLevel(value)
     if (value && value !== directInputKey) {
       const newQuestBond = questLevelAndBonds.find((v) => v.level === value)
-      setQuestBond(newQuestBond?.bond || 0)
-      setBondPoint(formatBondPoint(newQuestBond?.bond || 0))
+      formValues.questBond = newQuestBond?.bond || 0
+      storage.saveFormValues(formValues)
+      setFormValues({ ...formValues})
     }
   }
 
   const onCopyResult = () => {
-    navigator.clipboard.writeText(calcBondPoint().toString())
+    navigator.clipboard.writeText(calcBondPoint(formValues).toString())
   }
 
   return (
@@ -101,14 +118,14 @@ function QuestBondCalculator() {
             })}
           </Select>
         </FormControl>
-        <TextField id="quest" label="クエスト絆ポイント" variant="outlined" type="number" inputProps={{inputMode:"numeric"}} fullWidth sx={{ mb: 2 }}  value={questBond} onChange={onQuestBondChanged} />
-        <TextField id="ce-bonus" label="礼装ボーナス(肖像は除く)" variant="outlined" type="number" inputProps={{inputMode:"numeric"}} fullWidth sx={{ mb: 2 }}  onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
-        <TextField id="event-bonus" label="イベントボーナス" variant="outlined" type="number" inputProps={{inputMode:"numeric"}} fullWidth sx={{ mb: 2 }}  onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
-        <FormControlLabel control={<Checkbox id="ce-fixed-bonus" />} label="肖像" onChange={onChange} />
-        <FormControlLabel control={<Checkbox id="start-up-bonus" />} label="前衛" onChange={onChange} />
-        <FormControlLabel control={<Checkbox id="start-up-support-bonus" />} label="サポート前衛" onChange={onChange} />
+        <TextField id="quest" label="クエスト絆ポイント" variant="outlined" type="number" inputProps={{inputMode:"numeric"}} fullWidth sx={{ mb: 2 }}  value={formValues.questBond} onChange={onQuestBondChanged} />
+        <TextField id="ce-bonus" label="礼装ボーナス(肖像は除く)" variant="outlined" type="number" inputProps={{inputMode:"numeric"}} fullWidth sx={{ mb: 2 }} value={formValues.ceBonus * 100} onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
+        <TextField id="event-bonus" label="イベントボーナス" variant="outlined" type="number" inputProps={{inputMode:"numeric"}} fullWidth sx={{ mb: 2 }} value={formValues.eventBonus * 100} onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
+        <FormControlLabel control={<Checkbox id="ce-fixed-bonus" />} label="肖像" onChange={onChange} checked={formValues.useCeFixedBonus} />
+        <FormControlLabel control={<Checkbox id="start-up-bonus" />} label="前衛" onChange={onChange} checked={formValues.isStartUpBonus}  />
+        <FormControlLabel control={<Checkbox id="start-up-support-bonus" />} label="サポート前衛" onChange={onChange} checked={formValues.isStartUpSupportBonus}  />
         <br/>
-        <FormControlLabel control={<Checkbox id="tea-pot" />} label="星見のティーポット" onChange={onChange} />
+        <FormControlLabel control={<Checkbox id="tea-pot" />} label="星見のティーポット" onChange={onChange} checked={formValues.useTeaPot}  />
       </form>
       <TextField id="result" label="結果" variant="outlined" value={bondPoint} fullWidth sx={{ mt: 5 }} InputProps={{endAdornment: <IconButton onClick={onCopyResult}><ContentCopyIcon /></IconButton> }} />
     </div>
