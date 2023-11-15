@@ -23,7 +23,8 @@ const calc = (quest: number, ceBonus: number, useHeroicPortrait: boolean, eventB
 const directInputKey = "直接入力"
 const questLevelAndBondTemplate = {
   [directInputKey]: 9999,
-  "オーディールコール": 2636,
+  "90★(オーディールコール)": 3164,
+  "90++(オーディールコール)": 2636,
   "90++": 1318,
   "90+": 1098
 }
