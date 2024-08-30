@@ -121,8 +121,8 @@ function QuestBondCalculator() {
           </Select>
         </FormControl>
         <TextField id="quest" label="クエスト絆ポイント" variant="outlined" type="number" inputProps={{inputMode:"numeric"}} fullWidth sx={{ mb: 2 }}  value={formValues.questBond} onChange={onQuestBondChanged} />
-        <TextField id="ce-bonus" label="礼装ボーナス(肖像は除く)" variant="outlined" type="number" inputProps={{inputMode:"numeric", min:0}} fullWidth sx={{ mb: 2 }} value={formValues.ceBonus * 100 >> 0} onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
-        <TextField id="event-bonus" label="イベントボーナス" variant="outlined" type="number" inputProps={{inputMode:"numeric", min:0}} fullWidth sx={{ mb: 2 }} value={formValues.eventBonus * 100 >> 0} onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
+        <TextField id="ce-bonus" label="礼装ボーナス(肖像は除く)" variant="outlined" type="number" inputProps={{inputMode:"numeric", min:0}} fullWidth sx={{ mb: 2 }} value={Math.round(formValues.ceBonus * 100)} onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
+        <TextField id="event-bonus" label="イベントボーナス" variant="outlined" type="number" inputProps={{inputMode:"numeric", min:0}} fullWidth sx={{ mb: 2 }} value={Math.round(formValues.eventBonus * 100)} onChange={onChange} InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}} />
         <FormControlLabel control={<Checkbox id="ce-fixed-bonus" />} label="肖像" onChange={onChange} checked={formValues.useCeFixedBonus} />
         <FormControlLabel control={<Checkbox id="start-up-bonus" />} label="前衛" onChange={onChange} checked={formValues.isStartUpBonus}  />
         <FormControlLabel control={<Checkbox id="start-up-support-bonus" />} label="サポート前衛" onChange={onChange} checked={formValues.isStartUpSupportBonus}  />
