@@ -23,6 +23,14 @@ const calc = (quest: number, ceBonus: number, useHeroicPortrait: boolean, eventB
 const directInputKey = "直接入力"
 const questLevelAndBondTemplate = {
   [directInputKey]: 9999,
+  "100★★★(冠位研鑽戦)": 4748,
+  "100★★(冠位研鑽戦)": 4438,
+  "100★(冠位研鑽戦)": 4147,
+  "100+++(冠位研鑽戦)": 3876,
+  "100++(冠位研鑽戦)": 3622,
+  "100+(冠位研鑽戦)": 3385,
+  "100(冠位研鑽戦)": 3164,
+  "90★★★(オーディールコール)": 4557,
   "90★★(オーディールコール)": 3797,
   "90★(オーディールコール)": 3164,
   "90++(オーディールコール)": 2636,
